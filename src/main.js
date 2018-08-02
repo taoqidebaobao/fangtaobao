@@ -4,6 +4,7 @@ import App from "./App.vue";
 import VueRouter from "vue-router";
 // 引入index组件
 import index from "./components/index.vue";
+import orderInfo from "./components/orderInfo.vue";
 import goodsInfo from './components/goodsInfo.vue';
 import buyCar from './components/buyCar.vue';
 import payOrder from './components/payOrder.vue';
@@ -78,14 +79,19 @@ const router = new VueRouter({
     },
     // 订单支付路由
     {
-      path:"/payOrder",
+      path:"/payOrder/:ids",
       component:payOrder
     },
     // 登陆路由
     {
       path:'/login',
       component:login
-    }
+    },
+    // 支付中心
+    {
+      path:"/orderInfo/:orderid",
+      component:orderInfo
+    },
   ]
 });
 
@@ -197,7 +203,20 @@ new Vue({
   // 渲染 App组件
   render: h => h(App),
   // 挂载仓库
-  store
+  store,
+  // 生命周期函数
+  beforeCreate(){
+    // console.log('app-beforeCreate');
+    axios.get('/site/account/islogin')
+    .then(response=>{
+      // console.log(response);
+      // if(response.data.code=='logined')
+      store.state.isLogin = response.data.code=='logined';
+    })
+    .catch(err=>{
+      // console.log(err);
+    })
+  },
 });
 
 // 注册一些逻辑
